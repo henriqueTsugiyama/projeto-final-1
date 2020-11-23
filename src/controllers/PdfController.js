@@ -7,14 +7,30 @@ import Product from '../models/Product';
 class PDFController {
     async store(req, res) {
     try{
-            const { name, _id} = req.body;
-            const fetchProduct = Product.findOne({ name: name, id: _id   })
-            if(!fetchProduct){
-                return res.status(400).json({message:'error, validation failed. Remember: check to see if id is valid'});
-            }
-            
-            await generatePDF(fetchProduct(name, _id));
-            return res.status(200).json({message: "You sucessfully generated your pdf file"});
+      
+      const { id } = req.params;
+      const fetchProduct = await Product.findOne({ _id: id });
+
+      if(!fetchProduct){
+          return res.status(400).json({ message:'error, validation failed. Remember: check to see if id is valid'});
+      }
+      const { name, description, price } = fetchProduct;
+
+      const pdf = new PDFKit();
+
+      pdf.text(`All Bertinho`)
+      pdf.text(`${name} - ${description}`)
+      pdf.text(`Apenas: R$${price}`)
+      .fillColor('#999');
+      pdf.text(`
+      Leia o QRCode diretamente do seu celular
+      e faça a compra mais rápida da sua vida!`);
+      pdf.image(`tmp/qrcodes/${id}.png`, 150, 150);
+  
+      pdf.pipe(fs.createWriteStream(`tmp/pdf/${name}.pdf`));
+      pdf.end();
+
+      return res.status(200).json({message: "You sucessfully generated your pdf file"});
     }
        
     catch (err) {
@@ -22,17 +38,5 @@ class PDFController {
       }
     }
   }
-
-  const generatePDF = (name, id)=> {
-    
-    
-    const pdf = new PDFKit();
-    
-    pdf.text(`${id}`).image(`qrcodes/${name+id}.png`, 300, 300);
-
-    pdf.pipe(fs.createWriteStream(`pdf/${id}.pdf`));
-    pdf.end();
-}
-
 
 export default new PDFController;

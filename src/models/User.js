@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-
+import argon2 from "argon2";
 const UserSchema = new Schema(
   {
     name: {

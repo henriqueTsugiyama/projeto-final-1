@@ -15,7 +15,7 @@ class AuthController {
 
     const isValid = await auth.validadePassword(
       password,
-      userExist.passwordhash
+      userExist.password
     );
 
     if (!isValid) {

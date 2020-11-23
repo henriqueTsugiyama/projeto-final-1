@@ -15,5 +15,5 @@ DB_MONGO=mongodb+srv://<clustername>:<password>@cluster0.acbkw.mongodb.net/<dbna
 
 ## lembretes
 ```
-Estamos a 10 commits sem nenhum acidente, nosso recorde é de 35 commits!
+Estamos a 11 commits sem nenhum acidente, nosso recorde é de 35 commits!
 ```
