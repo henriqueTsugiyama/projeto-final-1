@@ -18,6 +18,7 @@ class AuthController {
       userExist.password
     );
 
+
     if (!isValid) {
       return res.status(422).json({ error: "incorrect password" });
     }

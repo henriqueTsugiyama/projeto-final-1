@@ -9,7 +9,6 @@ import 'dotenv/config';
 
 connectDB();
 
-
 const server = express();
 server.use(express.json());
 

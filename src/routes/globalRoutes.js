@@ -26,9 +26,12 @@ destroy – Remove o dado
 routes.post("/signin", upload.none(), AuthController.store);
 
 /*Rotas de Produto*/
-routes.post("/product", ProductController.store);
-routes.put("/product/:id", ProductController.update);
-routes.delete("/product/:id", ProductController.delete);
+routes.get("/product", AuthMiddleware, ProductController.index);
+routes.get("/product/:id", AuthMiddleware, ProductController.show);
+
+routes.post("/product", AuthMiddleware, ProductController.store);
+routes.put("/product/:id", AuthMiddleware, ProductController.update);
+routes.delete("/product/:id", AuthMiddleware, ProductController.delete);
 
 /*Rota do PDF */
 routes.get("/pdf/:id", PDFController.store);

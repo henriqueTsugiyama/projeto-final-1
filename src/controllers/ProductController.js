@@ -6,6 +6,42 @@ import fs from 'fs';
 import QrcodeProduct from "../models/QrcodeProduct";
 
 class ProductController {
+  async show(req, res){ 
+    const { admin } = req.user;
+
+    if (!admin) {
+      return res.status(401).json({ error: "validations fails" });
+    }
+
+    const { id } = req.params;
+
+    try {
+      await Product.find({ _id: id })
+      .populate('image')
+      .exec(function(_, product) {
+        return res.status(200).json(product);
+      });
+    }catch(err) {
+      return res.status(400).json(err);
+    }
+  }
+  async index(req, res) {
+    const { admin } = req.user;
+
+    if (!admin) {
+      return res.status(401).json({ error: "validations fails" });
+    }
+
+    try {
+      await Product.find({ sold: false })
+      .populate('image')
+      .exec(function(_, products) {
+        return res.status(200).json(products);
+      });
+    }catch(err) {
+      return res.status(400).json(err);
+    }
+}
   async store(req, res) {
     /** PARA TESTAR NO INSOMIA: SALVAR PRIMEIRO UMA IMAGEM E USAR ID DA IMAGEM EM IMAGE */
 
@@ -16,6 +52,12 @@ class ProductController {
       quantity: Yup.number().required().positive().integer(),
       image: Yup.string().required(),
     });
+
+    const { admin } = req.user;
+    
+    if (!admin) {
+      return res.status(401).json({ error: "validations fails" });
+    }
 
     const checkSchema = await schemaValidation.isValid(req.body);
 
@@ -60,6 +102,12 @@ class ProductController {
       quantity: Yup.number().positive().integer(),
     });
 
+    const { admin } = req.user;
+    
+    if (!admin) {
+      return res.status(401).json({ error: "validations fails" });
+    }
+
     const { id } = req.params;
 
     const checkSchema = await schemaValidation.isValid(req.body);
@@ -81,6 +129,12 @@ class ProductController {
   async delete(req, res) {
     try {
       const { id } = req.params;
+
+      const { admin } = req.user;
+    
+      if (!admin) {
+        return res.status(401).json({ error: "validations fails" });
+      }
 
       const { image } = await Product.findById({ _id: id });
       await ImageProduct.findByIdAndDelete(image);
